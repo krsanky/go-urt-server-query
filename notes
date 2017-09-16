@@ -1,0 +1,43 @@
+getserversResponse
+packets  consist  of  the  ASCII
+text ‘getserversResponse‘ immediately followed by
+a  variable  number  of  7-byte  fields  and  the  trailing
+text ‘\EOT’. Each 7-byte field contains the charac- ter  ‘\’  (one  byte),  an  IPv4  address  (4  bytes)  and
+UDP  port  number  (2  bytes)  of  a  registered  game
+server.  Each
+getserversResponse
+packet  may  carry
+up to 112 game servers (810 bytes of UDP payload
+per
+getserversResponse
+packet).
+
+
+Requesting servers from the master...
+Resolving master.urbanterror.info
+master.urbanterror.info resolved to 176.31.100.80:27900
+CL_ServersResponsePacket
+195 servers parsed (total 195)
+CL_ServersResponsePacket
+123 servers parsed (total 318)
+180 servers listed in browser with 437 players.
+138 servers not listed due to filters, packet loss or pings higher than 800
+54 servers listed in browser with 433 players.
+264 servers not listed due to filters, packet loss or pings higher than 800
+Added favorite server 209.190.50.170:27960
+2 servers listed in browser with 29 players.
+3 servers not listed due to filters, packet loss or pings higher than 800
+2 servers listed in browser with 35 players.
+3 servers not listed due to filters, packet loss or pings higher than 800
+2 servers listed in browser with 176 players.
+3 servers not listed due to filters, packet loss or pings higher than 800
+2 servers listed in browser with 210 players.
+3 servers not listed due to filters, packet loss or pings higher than 800
+2 servers listed in browser with 182 players.
+3 servers not listed due to filters, packet loss or pings higher than 800
+]/quit
+----- CL_Shutdown -----
+Closing SDL audio device...
+SDL audio device shut down.
+RE_Shutdown( 1 )
+
