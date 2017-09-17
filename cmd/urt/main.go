@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/krsanky/go-urt-server-query/server_query"
 )
 
@@ -10,5 +12,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	server_query.TransformServersData(data)
+	servers, err := server_query.InterpretResponse(data)
+	if err != nil {
+		panic(err)
+	}
+	for _, s := range servers {
+		fmt.Println(s)
+	}
+	fmt.Println()
 }
