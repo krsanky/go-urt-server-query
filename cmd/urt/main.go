@@ -12,10 +12,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	servers, err := server_query.InterpretResponse(data)
-	if err != nil {
-		panic(err)
-	}
+	servers := server_query.GetServers(data)
 	for _, s := range servers {
 		fmt.Println(s)
 	}

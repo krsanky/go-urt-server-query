@@ -16,8 +16,8 @@ type Server struct {
 	Port    int
 }
 
-func (s *Server) String() string {
-	return fmt.Sprintf("<server ip:%s port:%d>", s.Address, s.Port)
+func (s Server) String() string {
+	return fmt.Sprintf("<Server ip:%s port:%d>", s.Address, s.Port)
 }
 
 func GetStatus(address string) ([]byte, error) {
@@ -42,8 +42,6 @@ func Get(address string, msg string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	//fmt.Printf("len:%d\n", len)
-	//fmt.Printf("buf:%s\n", string(buf))
 
 	return buf, nil
 }
@@ -76,11 +74,8 @@ func GetServersData() ([][]byte, error) {
 		buf := make([]byte, 65507)
 		n, err = conn.Read(buf)
 		if e, ok := err.(net.Error); ok && e.Timeout() {
-			// This is an expected timeout
-			// fmt.Printf("timeout:%s\n", err.Error())
 			break
 		} else if err != nil {
-			// This is an error
 			return nil, err
 		}
 		bufs = append(bufs, buf[:n])
@@ -98,33 +93,26 @@ func responseValid(resp [][]byte) bool {
 	return false
 }
 
-func InterpretResponse(resp [][]byte) ([]Server, error) {
+func GetServers(resp [][]byte) []Server {
 	var servers []Server
 	var data [][]byte
+
 	for i, d := range resp {
 		data = bytes.Split(d, []byte("\\"))
-		//fmt.Printf("\n%q\n", data)
 		data = data[1:]
 		if i == len(resp)-1 {
 			data = data[:len(data)-1]
 		}
-		//fmt.Printf("\n%q\n", data)
 		for _, s := range data {
-			//fmt.Printf("%q %d ", s, len(s))
 			if len(s) != 6 {
 				fmt.Printf("%q %d ", s, len(s))
 				continue
 			}
 			ip := net.IPv4(s[0], s[1], s[2], s[3])
-			//fmt.Printf("%s ", ip.String())
-
-			port := int32(s[4])<<8 | int32(s[5])
-			//fmt.Printf(" port:%d ", port)
-			servers = append(servers, Server{ip, int(port)})
+			port := int(s[4])<<8 | int(s[5])
+			servers = append(servers, Server{ip, port})
 		}
-		//fmt.Println()
-
 	}
 
-	return servers, nil
+	return servers
 }
