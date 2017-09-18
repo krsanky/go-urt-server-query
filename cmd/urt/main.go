@@ -11,21 +11,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(string(data))
+
 	vars, err := urt.ServerVars(data)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("len vars:%d\n", len(vars))
-	for k, v := range vars {
-		fmt.Printf("k:%s v:%s\n", k, v)
-	}
 
-	//servers, err := urt.GetServers()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//for _, s := range servers {
-	//	fmt.Println(s, s.Address())
-	//}
-	//fmt.Println()
+	players, err := urt.Players(data)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("len players:%d\n", len(players))
+	for _, p := range players {
+		fmt.Println(p)
+	}
 }

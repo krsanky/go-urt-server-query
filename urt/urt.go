@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"strconv"
 	"time"
 )
 
@@ -22,6 +23,16 @@ func (s Server) String() string {
 
 func (s Server) Address() string {
 	return fmt.Sprintf("%s:%d", s.Ip, s.Port)
+}
+
+type Player struct {
+	Name  string
+	Ping  int
+	Score int
+}
+
+func (p Player) String() string {
+	return fmt.Sprintf("<Player %s ping:%d score:%d>", p.Name, p.Ping, p.Score)
 }
 
 func GetRawStatus(address string) ([]byte, error) {
@@ -41,12 +52,11 @@ func Get(address string, msg string) ([]byte, error) {
 	fmt.Fprintf(conn, string(append(prefix, msg...)))
 
 	buf := make([]byte, 65507)
-	_, err = bufio.NewReader(conn).Read(buf)
+	n, err := bufio.NewReader(conn).Read(buf)
 	if err != nil {
 		return nil, err
 	}
-
-	return buf, nil
+	return buf[:n], nil
 }
 
 func ServerVars(data []byte) (map[string]string, error) {
@@ -104,15 +114,6 @@ func getServersData() ([][]byte, error) {
 	return bufs, nil
 }
 
-// borken
-func responseValid(resp [][]byte) bool {
-	fmt.Printf("%v == %v\n", resp[0], append(prefix, "getserversResponse"...))
-	if bytes.Equal(resp[0], append(prefix, "getserversResponse"...)) {
-		return true
-	}
-	return false
-}
-
 func GetServers() ([]Server, error) {
 	resp, err := getServersData()
 	if err != nil {
@@ -140,4 +141,34 @@ func GetServers() ([]Server, error) {
 	}
 
 	return servers, nil
+}
+
+func Players(data []byte) ([]Player, error) {
+	split := bytes.Split(data, []byte("\n"))
+	if len(split) < 2 {
+		return nil, errors.New("problem with server status data")
+	}
+	split = split[2:]
+
+	var players []Player
+	for _, p := range split {
+		if bytes.Equal([]byte(""), p) {
+			continue
+		}
+		split = bytes.SplitN(p, []byte(" "), 3)
+		if len(split) != 3 {
+			continue
+		}
+		ping, err := strconv.Atoi(string(split[1]))
+		if err != nil {
+			continue
+		}
+		score, err := strconv.Atoi(string(split[0]))
+		if err != nil {
+			continue
+		}
+		players = append(players, Player{string(split[2]), ping, score})
+
+	}
+	return players, nil
 }
