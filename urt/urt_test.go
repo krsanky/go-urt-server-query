@@ -1,4 +1,4 @@
-package server_query
+package urt
 
 import (
 	"testing"

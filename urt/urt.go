@@ -1,4 +1,4 @@
-package server_query
+package urt
 
 import (
 	"bufio"
@@ -12,12 +12,16 @@ import (
 var prefix = []byte{0xff, 0xff, 0xff, 0xff}
 
 type Server struct {
-	Address net.IP
-	Port    int
+	Ip   net.IP
+	Port int
 }
 
 func (s Server) String() string {
-	return fmt.Sprintf("<Server ip:%s port:%d>", s.Address, s.Port)
+	return fmt.Sprintf("<Server ip:%s port:%d>", s.Ip, s.Port)
+}
+
+func (s Server) Address() string {
+	return fmt.Sprintf("%s:%d", s.Ip, s.Port)
 }
 
 func GetStatus(address string) ([]byte, error) {
@@ -28,14 +32,13 @@ func Get(address string, msg string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = conn.SetDeadline(time.Now().Add(10 * time.Second))
-	if err != nil {
-		return nil, err
-	}
+	//err = conn.SetDeadline(time.Now().Add(5 * time.Second))
+	//if err != nil {
+	//	return nil, err
+	//}
 	defer conn.Close()
 
-	m := append(prefix, msg...)
-	fmt.Fprintf(conn, string(m))
+	fmt.Fprintf(conn, string(append(prefix, msg...)))
 
 	buf := make([]byte, 65507)
 	_, err = bufio.NewReader(conn).Read(buf)
@@ -46,7 +49,7 @@ func Get(address string, msg string) ([]byte, error) {
 	return buf, nil
 }
 
-func GetServersData() ([][]byte, error) {
+func getServersData() ([][]byte, error) {
 	addrs, err := net.LookupHost("master.urbanterror.info")
 	if err != nil {
 		return nil, err
@@ -93,7 +96,12 @@ func responseValid(resp [][]byte) bool {
 	return false
 }
 
-func GetServers(resp [][]byte) []Server {
+func GetServers() ([]Server, error) {
+	resp, err := getServersData()
+	if err != nil {
+		return nil, err
+	}
+
 	var servers []Server
 	var data [][]byte
 
@@ -114,5 +122,5 @@ func GetServers(resp [][]byte) []Server {
 		}
 	}
 
-	return servers
+	return servers, nil
 }
