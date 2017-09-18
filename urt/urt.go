@@ -24,7 +24,7 @@ func (s Server) Address() string {
 	return fmt.Sprintf("%s:%d", s.Ip, s.Port)
 }
 
-func GetStatus(address string) ([]byte, error) {
+func GetRawStatus(address string) ([]byte, error) {
 	return Get(address, "getstatus")
 }
 func Get(address string, msg string) ([]byte, error) {
@@ -47,6 +47,23 @@ func Get(address string, msg string) ([]byte, error) {
 	}
 
 	return buf, nil
+}
+
+func ServerVars(data []byte) (map[string]string, error) {
+	split := bytes.Split(data, []byte("\n"))
+	if len(split) < 2 {
+		return nil, errors.New("problem with server status data")
+	}
+	split = bytes.Split(split[1], []byte("\\"))
+	split = split[1:]
+	if len(split)%2 != 0 {
+		return nil, errors.New("problem with server status data 2")
+	}
+	var vars = make(map[string]string)
+	for i := 0; i < len(split); i += 2 {
+		vars[string(split[i])] = string(split[i+1])
+	}
+	return vars, nil
 }
 
 func getServersData() ([][]byte, error) {
