@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -23,6 +24,12 @@ func (s Server) String() string {
 
 func (s Server) Address() string {
 	return fmt.Sprintf("%s:%d", s.Ip, s.Port)
+}
+
+var colorCode = regexp.MustCompile(`\^[0-9]`)
+
+func StripColorCodes(s string) string {
+	return colorCode.ReplaceAllString(s, "")
 }
 
 type Player struct {
@@ -43,10 +50,10 @@ func Get(address string, msg string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	//err = conn.SetDeadline(time.Now().Add(5 * time.Second))
-	//if err != nil {
-	//	return nil, err
-	//}
+	err = conn.SetDeadline(time.Now().Add(3 * time.Second))
+	if err != nil {
+		return nil, err
+	}
 	defer conn.Close()
 
 	fmt.Fprintf(conn, string(append(prefix, msg...)))
@@ -84,7 +91,7 @@ func getServersData() ([][]byte, error) {
 	if len(addrs) < 1 {
 		return nil, errors.New("error with master server resolution")
 	}
-	fmt.Printf("master server:%s\n", addrs[0])
+	//fmt.Printf("master server:%s\n", addrs[0])
 
 	conn, err := net.Dial("udp", fmt.Sprintf("%s:27900", addrs[0]))
 	if err != nil {
@@ -131,7 +138,7 @@ func GetServers() ([]Server, error) {
 		}
 		for _, s := range data {
 			if len(s) != 6 {
-				fmt.Printf("%q %d ", s, len(s))
+				//fmt.Printf("%q %d ", s, len(s))
 				continue
 			}
 			ip := net.IPv4(s[0], s[1], s[2], s[3])
