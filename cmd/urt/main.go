@@ -2,11 +2,34 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/krsanky/go-urt-server-query/urt"
+	"github.com/krsanky/go-urt-server-query/urt/ui"
 )
 
 func main() {
+	if len(os.Args) >= 2 {
+		switch arg1 := os.Args[1]; arg1 {
+		case "urtctf":
+			urtCtf()
+		case "ui":
+			ui.Main()
+		default:
+			usage()
+		}
+	} else {
+		usage()
+	}
+}
+
+func usage() {
+	fmt.Println()
+	fmt.Println(`urt [urtctf|ui]`)
+	fmt.Println()
+}
+
+func urtCtf() {
 	data, err := urt.GetRawStatus("216.52.148.134:27961") // urtctf
 	if err != nil {
 		panic(err)
