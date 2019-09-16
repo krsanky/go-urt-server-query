@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/krsanky/go-urt-server-query/urt"
-	"github.com/krsanky/go-urt-server-query/urt/ui"
 )
 
 func main() {
@@ -13,8 +12,6 @@ func main() {
 		switch arg1 := os.Args[1]; arg1 {
 		case "urtctf":
 			urtCtf()
-		case "ui":
-			ui.Main()
 		default:
 			usage()
 		}
@@ -25,7 +22,7 @@ func main() {
 
 func usage() {
 	fmt.Println()
-	fmt.Println(`urt [urtctf|ui]`)
+	fmt.Println(`urt [urtctf]`)
 	fmt.Println()
 }
 
