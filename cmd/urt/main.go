@@ -16,7 +16,8 @@ func main() {
 			usage()
 		}
 	} else {
-		usage()
+		//usage()
+		urtCtf()
 	}
 }
 
