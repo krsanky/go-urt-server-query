@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/krsanky/go-urt-server-query/urt"
 )
@@ -28,5 +29,6 @@ func urtRfa() {
 		panic(err)
 	}
 
-	fmt.Printf("%s %d %s\n", vars["mapname"], len(players), vars["g_friendlyfire"])
+	now := time.Now()
+	fmt.Printf("%s %s %d\n", now.Format(time.RFC3339), vars["mapname"], len(players))
 }
