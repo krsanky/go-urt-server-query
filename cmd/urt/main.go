@@ -32,20 +32,21 @@ func urtCtf() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(data))
+	//fmt.Println(string(data))
 
-	vars, err := urt.ServerVars(data)
+	_, err = urt.ServerVars(data)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("len vars:%d\n", len(vars))
+	//fmt.Printf("len vars:%d\n", len(vars))
 
 	players, err := urt.Players(data)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("len players:%d\n", len(players))
+	//fmt.Printf("len players:%d\n", len(players))
 	for _, p := range players {
-		fmt.Println(p)
+		//fmt.Println(p)
+		fmt.Printf("%d %d %s\n", p.Ping, p.Score, p.Name)
 	}
 }
